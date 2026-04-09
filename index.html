@@ -270,8 +270,11 @@ async function callAI(msg){
 
   const d = await r.json();
 
-  const reply = d.choices[0].message.content;
+  if (!d.choices || !d.choices[0]) {
+  throw new Error(d.error || "Invalid AI response");
+}
 
+const reply = d.choices[0].message.content;
   convHist.push({role:'assistant',content:reply});
   if(convHist.length>24) convHist=convHist.slice(-20);
 
