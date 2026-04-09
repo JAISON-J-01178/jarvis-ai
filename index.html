@@ -1,0 +1,358 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  #jr{font-family:'JetBrains Mono',monospace;background:#080c10;color:#a8d8a8;min-height:640px;display:flex;flex-direction:column;border-radius:8px;overflow:hidden;border:1px solid #1a2a1a}
+  #hud{background:#080c10;border-bottom:1px solid #1a2a1a;padding:9px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+  #hud-l{display:flex;align-items:center;gap:10px}
+  #hud-logo{color:#4ade80;font-size:13px;font-weight:700;letter-spacing:3px}
+  .hud-dot{width:6px;height:6px;border-radius:50%;background:#4ade80;animation:blink 2s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+  #hud-r{display:flex;gap:14px;font-size:10px;color:#2d5a2d;flex-wrap:wrap}
+  .hv{color:#4ade80}
+  #mbar{padding:5px 14px;background:#0a0f0a;border-bottom:1px solid #0f1f0f;display:flex;gap:5px;align-items:center;flex-wrap:wrap}
+  .mp{font-size:9px;letter-spacing:1.5px;padding:2px 8px;border-radius:3px;border:1px solid #1a3a1a;color:#2d5a2d;cursor:pointer;transition:all 0.15s}
+  .mp.active{border-color:#4ade80;color:#4ade80;background:#0d2010}
+  #term{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:0;scroll-behavior:smooth;min-height:320px}
+  .ln{font-size:12px;line-height:1.8;white-space:pre-wrap;word-break:break-word}
+  .cmd{color:#4ade80}.out{color:#8bc88b}.dim{color:#2d5a2d;font-size:11px}.acc{color:#86efac}.warn{color:#fbbf24}.err{color:#f87171}.hd{color:#4ade80;font-weight:700;font-size:13px;letter-spacing:1px}.sep{color:#1a3a1a;user-select:none}
+  .conf-high{color:#4ade80;font-size:10px;letter-spacing:1px}.conf-med{color:#fbbf24;font-size:10px;letter-spacing:1px}.conf-low{color:#f87171;font-size:10px;letter-spacing:1px}
+  .think{display:flex;gap:4px;align-items:center;padding:4px 0}
+  .dot{width:5px;height:5px;border-radius:50%;background:#4ade80;animation:pulse 1.1s ease-in-out infinite}
+  .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+  @keyframes pulse{0%,100%{opacity:0.15}50%{opacity:1}}
+  #ibar{background:#080c10;border-top:1px solid #1a2a1a;padding:9px 14px;display:flex;align-items:center;gap:8px}
+  #ps{color:#4ade80;font-size:13px;white-space:nowrap}
+  #ci{flex:1;background:transparent;border:none;outline:none;color:#a8d8a8;font-family:'JetBrains Mono',monospace;font-size:12px;caret-color:#4ade80}
+  #ci::placeholder{color:#1a3a1a}
+  #sb{background:transparent;border:1px solid #1a3a1a;color:#4ade80;font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:3px;cursor:pointer;letter-spacing:1px;transition:all 0.15s}
+  #sb:hover{border-color:#4ade80;background:#0d2010}
+  #term::-webkit-scrollbar{width:3px}
+  #term::-webkit-scrollbar-track{background:#080c10}
+  #term::-webkit-scrollbar-thumb{background:#1a3a1a;border-radius:2px}
+  .rb{border-left:2px solid #1a3a1a;padding-left:12px;margin:4px 0 8px 0}
+  .qc-bar{display:flex;gap:5px;flex-wrap:wrap;padding:7px 14px;background:#080c10;border-top:1px solid #0f1f0f}
+  .qc{font-size:10px;color:#2d5a2d;border:1px solid #0f2a0f;padding:2px 9px;border-radius:3px;cursor:pointer;font-family:'JetBrains Mono',monospace;transition:all 0.15s;white-space:nowrap}
+  .qc:hover{color:#4ade80;border-color:#1a3a1a;background:#0a1a0a}
+  .freq-bar{display:flex;gap:4px;flex-wrap:wrap;padding:4px 14px;background:#060a06;border-top:1px solid #0a1a0a}
+  .ft{font-size:9px;color:#1a3a1a;letter-spacing:1px;margin-right:4px}
+  .fchip{font-size:9px;padding:1px 6px;border-radius:2px;border:1px solid #0f1f0f;color:#2d5a2d;cursor:pointer;font-family:'JetBrains Mono',monospace}
+  .fchip:hover{color:#4ade80;border-color:#1a3a1a}
+</style>
+
+<div id="jr">
+  <div id="hud">
+    <div id="hud-l">
+      <div id="hud-logo">◈ J.A.R.V.I.S</div>
+      <div class="hud-dot"></div>
+      <span style="font-size:9px;color:#2d5a2d;letter-spacing:2px">v3.0</span>
+    </div>
+    <div id="hud-r">
+      <span>MODE: <span class="hv" id="cm">STUDY</span></span>
+      <span>MEM: <span class="hv" id="mc">0</span></span>
+      <span>FREQ: <span class="hv" id="fc">—</span></span>
+      <span>CONF: <span class="hv" id="cc">—</span></span>
+    </div>
+  </div>
+  <div id="mbar">
+    <span style="font-size:9px;color:#1a3a1a;letter-spacing:1px;margin-right:2px">AUTO-MODE:</span>
+    <div class="mp active" id="p-study">◆ STUDY</div>
+    <div class="mp" id="p-code">◆ CODE</div>
+    <div class="mp" id="p-content">◆ CONTENT</div>
+    <div class="mp" id="p-math">◆ MATH</div>
+    <div class="mp" id="p-exam">◆ EXAM</div>
+  </div>
+  <div id="term"></div>
+  <div class="freq-bar" id="fbar">
+    <span class="ft">HOT TOPICS:</span>
+    <span style="font-size:9px;color:#1a3a1a">none yet</span>
+  </div>
+  <div class="qc-bar">
+    <div class="qc" onclick="qc('exp: os scheduling')">exp: os scheduling</div>
+    <div class="qc" onclick="qc('n: dbms normalization')">n: dbms normalization</div>
+    <div class="qc" onclick="qc('exam: recursion')">exam: recursion</div>
+    <div class="qc" onclick="qc('fix: my python code')">fix: python code</div>
+    <div class="qc" onclick="qc('sum: machine learning')">sum: machine learning</div>
+    <div class="qc" onclick="qc('history')">history</div>
+  </div>
+  <div id="ibar">
+    <span id="ps">jarvis:~$</span>
+    <input id="ci" type="text" placeholder="type command or question... (Enter to run)" autocomplete="off" spellcheck="false"/>
+    <button id="sb" onclick="go()">EXEC</button>
+  </div>
+</div>
+
+<script>
+const term=document.getElementById('term'),inp=document.getElementById('ci');
+const cmEl=document.getElementById('cm'),mcEl=document.getElementById('mc'),fcEl=document.getElementById('fc'),ccEl=document.getElementById('cc');
+const fbar=document.getElementById('fbar');
+
+let curMode='study',hist=[],histIdx=-1,convHist=[],lastResp='',lastCmd='';
+let topicFreq={},sessionMem={};
+
+const PILLS={study:'p-study',code:'p-code',content:'p-content',math:'p-math',exam:'p-exam'};
+
+const SHORTCUTS={
+  'n:':'notes on','exp:':'explain','sum:':'summary of','fix:':'debug and fix','ppt:':'create presentation outline for',
+  'def:':'define','eg:':'give example of','diff:':'difference between','list:':'list all about','q:':'quiz me on'
+};
+
+function setMode(m){
+  curMode=m; cmEl.textContent=m.toUpperCase();
+  Object.entries(PILLS).forEach(([k,id])=>document.getElementById(id).classList.toggle('active',k===m));
+}
+
+function detectMode(t){
+  const s=t.toLowerCase();
+  if(/\bexam:\b/.test(s)) return 'exam';
+  if(/debug|fix:|code|error|syntax|function|class|loop|array|pointer|compile|runtime|java\b|python|c\+\+|javascript|html|css/.test(s)) return 'code';
+  if(/caption|instagram|youtube|reel|tweet|viral|script|post|content|idea|creative/.test(s)) return 'content';
+  if(/solve|calculat|formula|integrat|differentiat|\bmath\b|equation|theorem|proof|algebra|geometry|calculus/.test(s)) return 'math';
+  return 'study';
+}
+
+function expandShortcut(raw){
+  for(const [sc,full] of Object.entries(SHORTCUTS)){
+    if(raw.toLowerCase().startsWith(sc)){
+      return full+' '+raw.slice(sc.length).trim();
+    }
+  }
+  return raw;
+}
+
+function trackTopic(query){
+  const words=query.toLowerCase().split(/\s+/).filter(w=>w.length>3&&!/^(explain|notes|summary|about|what|how|is|the|and|for|with|this|that|give|show|tell)$/.test(w));
+  words.forEach(w=>{ topicFreq[w]=(topicFreq[w]||0)+1; });
+  updateFreqBar();
+}
+
+function updateFreqBar(){
+  const sorted=Object.entries(topicFreq).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  if(!sorted.length) return;
+  fcEl.textContent=sorted[0][0].toUpperCase();
+  fbar.innerHTML='<span class="ft">HOT TOPICS:</span>';
+  sorted.forEach(([w,n])=>{
+    const c=document.createElement('span');
+    c.className='fchip'; c.textContent=`${w}(${n})`;
+    c.onclick=()=>{inp.value='exp: '+w;inp.focus();};
+    fbar.appendChild(c);
+  });
+}
+
+function getTopTopics(){
+  return Object.entries(topicFreq).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([w])=>w).join(', ')||'none';
+}
+
+function print(text,cls='out'){
+  const el=document.createElement('div');
+  el.className=`ln ${cls}`; el.textContent=text;
+  term.appendChild(el); term.scrollTop=term.scrollHeight;
+}
+
+function printBlock(lines){
+  const b=document.createElement('div'); b.className='rb';
+  lines.forEach(({t,c})=>{
+    const el=document.createElement('div');
+    el.className=`ln ${c||'out'}`; el.textContent=t;
+    b.appendChild(el);
+  });
+  term.appendChild(b); term.scrollTop=term.scrollHeight;
+}
+
+function showThink(){
+  const el=document.createElement('div'); el.className='think'; el.id='thinking';
+  for(let i=0;i<3;i++){const d=document.createElement('div');d.className='dot';el.appendChild(d);}
+  term.appendChild(el); term.scrollTop=term.scrollHeight;
+}
+function removeThink(){const e=document.getElementById('thinking');if(e)e.remove();}
+
+function formatResp(text,mode){
+  const lines=text.split('\n');
+  const result=[];
+  lines.forEach(line=>{
+    const t=line.trim(); if(!t) return;
+    if(t.startsWith('◈')||t.startsWith('##')) result.push({t,c:'hd'});
+    else if(/^\[(STUDY|CODE|CONTENT|MATH|EXAM)\]/.test(t)) result.push({t,c:'warn'});
+    else if(/^(CONCEPT:|DEF:|DEFINITION:)/.test(t)) result.push({t,c:'acc'});
+    else if(/^(KEY POINTS:|STEPS:|ALGORITHM:|APPROACH:|MARKS:)/.test(t)) result.push({t,c:'warn'});
+    else if(/^(EXAMPLE:|OUTPUT:|RESULT:|ANSWER:)/.test(t)) result.push({t,c:'acc'});
+    else if(/^(NOTE:|TIP:|EXAM TRICK:|2 MARK:|5 MARK:|10 MARK:|CONFIDENCE:)/.test(t)) result.push({t,c:'warn'});
+    else if(/^CONFIDENCE:\s*(HIGH|MEDIUM|LOW)/i.test(t)){
+      const lv=t.toUpperCase().includes('HIGH')?'conf-high':t.toUpperCase().includes('MEDIUM')?'conf-med':'conf-low';
+      result.push({t:'▸ '+t,c:lv});
+      const cv=t.toUpperCase().includes('HIGH')?'HIGH':t.toUpperCase().includes('MEDIUM')?'MED':'LOW';
+      ccEl.textContent=cv;
+    }
+    else if(t.startsWith('•')||t.startsWith('-')||t.startsWith('→')) result.push({t,c:'out'});
+    else if(t.startsWith('```')||t.startsWith('---')) result.push({t,c:'dim'});
+    else result.push({t,c:'out'});
+  });
+  return result;
+}
+
+const SYS=`You are JARVIS v3.0 — a hyper-intelligent, adaptive AI assistant for students. You are fast, structured, and precise.
+
+THINKING PROCESS (internal only — never show this):
+Before answering, internally: 1) identify the exact concept 2) determine mode 3) select best explanation strategy 4) assess confidence
+
+PERSONALITY BY MODE:
+- STUDY: Clear teacher tone. Like a brilliant senior explaining to a friend. Can use "bro", "da", "seri" if user uses Tamil.
+- CODE: Strict, precise debugger. Minimal words. Show exact fix. Use code blocks with --- CODE --- markers.
+- CONTENT: Creative, punchy, engaging. Gen-Z aware.
+- MATH: Step-by-step. Show each step on new line. Never skip steps.
+- EXAM: Academic, structured, mark-aware.
+
+RESPONSE FORMAT (always):
+[MODE]
+
+◈ TOPIC NAME
+
+CONCEPT: [1 clean sentence]
+
+KEY POINTS:
+• point 1
+• point 2
+• point 3
+
+EXAMPLE: [concrete example — skip if irrelevant]
+
+NOTE: [exam tip or smart insight — optional]
+
+CONFIDENCE: High / Medium / Low
+
+EXAM MODE FORMAT (when exam: prefix detected):
+[EXAM]
+
+◈ TOPIC
+
+2 MARK:
+[Short 2-line answer]
+
+5 MARK:
+[5-6 point structured answer]
+
+10 MARK:
+[Full answer with definition, explanation, types/advantages, diagram hint, example]
+
+CONFIDENCE: High / Medium / Low
+
+RULES:
+1. Always end with CONFIDENCE: High/Medium/Low
+2. Keep total under 220 words unless exam mode or user asks "detailed"
+3. Detect shortcuts: n: = notes, exp: = explain, sum: = summary, fix: = debug, ppt: = PPT outline
+4. If query is mixed/incomplete (like "dbms notes fast" or "java fix error"), still understand and respond
+5. Never say "As an AI" — just be JARVIS
+6. For code: wrap code in --- CODE START --- and --- CODE END ---
+7. Mix Tamil naturally only if user uses it first`;
+
+async function callAI(msg){
+  const topTopics=getTopTopics();
+  const sysWithMem=SYS+(topTopics!=='none'?`\n\nUSER FOCUS TOPICS THIS SESSION: ${topTopics}. Prioritize these in explanations if relevant.`:'');
+  convHist.push({role:'user',content:msg});
+  const r=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:sysWithMem,messages:convHist})
+  });
+  if(!r.ok) throw new Error(`HTTP ${r.status}`);
+  const d=await r.json();
+  const reply=d.content.map(b=>b.text||'').join('');
+  convHist.push({role:'assistant',content:reply});
+  if(convHist.length>24) convHist=convHist.slice(-20);
+  return reply;
+}
+
+async function go(){
+  const raw=inp.value.trim(); if(!raw) return;
+  inp.value='';
+
+  // Built-in commands
+  const lo=raw.toLowerCase();
+  if(lo==='clear'){term.innerHTML='';convHist=[];print('Terminal cleared. Session memory retained.','dim');return;}
+  if(lo==='history'){
+    print('','sep');
+    print('◈ COMMAND HISTORY','hd');
+    if(!hist.length){print('No commands yet.','dim');}
+    else hist.slice(0,10).forEach((h,i)=>print(`  ${i+1}. ${h}`,'out'));
+    print('','sep');
+    return;
+  }
+  if(lo==='last'){
+    print('','sep');
+    print('◈ LAST RESPONSE','hd');
+    if(!lastResp){print('No previous response.','dim');}
+    else lastResp.split('\n').filter(l=>l.trim()).forEach(l=>print(l,'out'));
+    print('','sep');
+    return;
+  }
+  if(lo==='repeat'||lo==='redo'){
+    if(!lastCmd){print('Nothing to repeat.','dim');return;}
+    inp.value=lastCmd; go(); return;
+  }
+
+  hist.unshift(raw); histIdx=-1; lastCmd=raw;
+  mcEl.textContent=hist.length;
+  trackTopic(raw);
+
+  const expanded=expandShortcut(raw);
+  const mode=detectMode(expanded);
+  setMode(mode);
+
+  print('','sep');
+  print(`jarvis:~$ ${raw}`,'cmd');
+  if(expanded!==raw) print(`  → interpreted: ${expanded}`,'dim');
+  showThink();
+
+  try{
+    const reply=await callAI(expanded);
+    removeThink();
+    lastResp=reply;
+    const formatted=formatResp(reply,mode);
+    printBlock(formatted);
+    sessionMem.lastTopic=raw;
+    sessionMem.lastMode=mode;
+  }catch(e){
+    removeThink();
+    print(`◈ ERROR: ${e.message}`,'err');
+    print('Connection issue. Try again.','dim');
+  }
+  print('','sep');
+}
+
+// History navigation
+inp.addEventListener('keydown',e=>{
+  if(e.key==='Enter') go();
+  if(e.key==='ArrowUp'){histIdx=Math.min(histIdx+1,hist.length-1);inp.value=hist[histIdx]||'';setTimeout(()=>inp.setSelectionRange(inp.value.length,inp.value.length),0);}
+  if(e.key==='ArrowDown'){histIdx=Math.max(histIdx-1,-1);inp.value=histIdx>=0?hist[histIdx]:'';}
+});
+
+function qc(cmd){inp.value=cmd;inp.focus();go();}
+
+// Boot sequence
+function boot(){
+  const lines=[
+    {t:'╔═══════════════════════════════════════════════════════╗',c:'dim'},
+    {t:'║  J.A.R.V.I.S v3.0 — Adaptive Intelligence System     ║',c:'dim'},
+    {t:'║  Thinking Mode ◆ Exam Mode ◆ Smart Memory ◆ v3       ║',c:'dim'},
+    {t:'╚═══════════════════════════════════════════════════════╝',c:'dim'},
+  ];
+  printBlock(lines);
+  setTimeout(()=>print('All systems upgraded and nominal.','acc'),100);
+  setTimeout(()=>{
+    const cmds=[
+      {t:'── SHORTCUTS ──────────────────────────────────────────',c:'dim'},
+      {t:'  n: [topic]    → notes        exp: [topic]  → explain',c:'dim'},
+      {t:'  sum: [topic]  → summary      fix: [code]   → debug',c:'dim'},
+      {t:'  ppt: [topic]  → PPT outline  exam: [topic] → exam answers',c:'dim'},
+      {t:'── RECALL ─────────────────────────────────────────────',c:'dim'},
+      {t:'  last · history · repeat · clear',c:'dim'},
+      {t:'───────────────────────────────────────────────────────',c:'dim'},
+    ];
+    printBlock(cmds);
+  },200);
+  setTimeout(()=>print('Ready. What shall we work on?','acc'),300);
+}
+
+boot();
+inp.focus();
+</script>
