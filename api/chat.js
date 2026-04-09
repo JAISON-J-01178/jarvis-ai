@@ -1,6 +1,5 @@
 export default async function handler(req, res) {
 
-  // ✅ Allow only POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -15,7 +14,7 @@ export default async function handler(req, res) {
     const { message, history, system } = req.body;
 
     const messages = [
-      { role: "system", content: system || "You are a helpful AI assistant." },
+      { role: "system", content: system || "You are a helpful assistant." },
       ...(history || []),
       { role: "user", content: message }
     ];
@@ -34,13 +33,20 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    if (!data.choices) {
-  return res.status(500).json({ error: "No response from AI", full: data });
-}
+    // 🔥 DEBUG LOG
+    console.log("Groq response:", data);
 
-res.status(200).json(data);
+    if (!data || !data.choices) {
+      return res.status(500).json({
+        error: "Invalid response from Groq",
+        full: data
+      });
+    }
+
+    return res.status(200).json(data);
 
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Server error:", error);
+    return res.status(500).json({ error: error.message });
   }
 }
